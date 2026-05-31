@@ -10,13 +10,9 @@ exports.handler = async function(event, context) {
     return { statusCode: 200, headers, body: '' };
   }
 
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: { message: 'Method not allowed' } }) };
-  }
-
   const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
   if (!ANTHROPIC_API_KEY) {
-    return { statusCode: 500, headers, body: JSON.stringify({ error: { message: 'ANTHROPIC_API_KEY environment variable not set.' } }) };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: { message: 'ANTHROPIC_API_KEY not set.' } }) };
   }
 
   let requestBody;
@@ -38,21 +34,9 @@ exports.handler = async function(event, context) {
     });
 
     const text = await response.text();
-
-    if (!text || text.trim() === '') {
-      return { statusCode: 500, headers, body: JSON.stringify({ error: { message: 'Empty response from Anthropic API.' } }) };
-    }
-
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch(e) {
-      return { statusCode: 500, headers, body: JSON.stringify({ error: { message: 'Invalid JSON from Anthropic API: ' + text.slice(0, 200) } }) };
-    }
-
-    return { statusCode: 200, headers, body: JSON.stringify(data) };
+    return { statusCode: 200, headers, body: text };
 
   } catch(err) {
-    return { statusCode: 500, headers, body: JSON.stringify({ error: { message: 'Fetch error: ' + err.message } }) };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: { message: err.message } }) };
   }
 };
