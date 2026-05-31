@@ -294,7 +294,8 @@ async function runStudy() {
       })
     });
     const d = await res.json();
-    if(d.error) throw new Error(d.error.message);
+    if(d.error) throw new Error(d.error.message || JSON.stringify(d.error));
+    if(!d.content) throw new Error('No content in response: ' + JSON.stringify(d).slice(0,300));
     const raw = d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
     let study;
     try { study = JSON.parse(raw); }
