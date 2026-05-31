@@ -15,14 +15,8 @@ exports.handler = async function(event, context) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: { message: 'ANTHROPIC_API_KEY not set.' } }) };
   }
 
-  let requestBody;
   try {
-    requestBody = JSON.parse(event.body);
-  } catch(e) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: { message: 'Invalid request body.' } }) };
-  }
-
-  try {
+    const requestBody = JSON.parse(event.body);
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -34,7 +28,7 @@ exports.handler = async function(event, context) {
     });
 
     const text = await response.text();
-    return { statusCode: 200, headers, body: text };
+    return { statusCode: response.status, headers, body: text };
 
   } catch(err) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: { message: err.message } }) };
