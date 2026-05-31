@@ -231,14 +231,12 @@ const COV_TAGS = {
   'Creation Mandate':'ctag-creation','Abrahamic Covenant':'ctag-abrahamic',
   'Mosaic Covenant':'ctag-mosaic','Davidic Covenant':'ctag-davidic','New Covenant':'ctag-new'
 };
-const SYS = `You are a biblical Hebrew and Greek word study assistant for Ryan Reger. His "Unleashed" framework helps believers activate their God-given calling (210 Unleashed Cohort, dominion mandate Genesis 1:28 parah/rabah/kabash/radah, grace arc chen to charis to dunamis).
+const SYS = `Biblical Hebrew/Greek word study assistant for Ryan Reger's Unleashed framework (210 Unleashed Cohort, Genesis 1:28 dominion mandate: parah/rabah/kabash/radah, grace arc: chen/charis/dunamis).
 
-Return ONLY a valid JSON object. No markdown, no backticks, no text outside the JSON.
-
-Required structure:
+Return ONLY valid JSON, no markdown, no backticks:
 {"title":"","lexicalFacts":{"heading":"","notice":"","wordBoxes":[{"original":"","transliteration":"","definition":""}],"content":""},"grammaticalContext":{"heading":"","notice":"","content":""},"historicalContext":{"heading":"","notice":"","content":""},"covenantContext":{"heading":"","notice":"","tags":[],"content":""},"crossReferences":{"heading":"","notice":"","content":""},"christCentered":{"heading":"","notice":"","content":""},"interpretiveConnections":{"heading":"","notice":"","content":""},"teachingApplication":{"heading":"","notice":"","content":""}}
 
-Content fields: use only p, ul, li, strong, em HTML tags. For scriptures: <div class="scripture-block"><p class="scripture-text">quote</p><p class="scripture-ref">ref</p></div>. All JSON strings must be valid — escape all quotes, no literal newlines. Tags array only from: Creation Mandate, Abrahamic Covenant, Mosaic Covenant, Davidic Covenant, New Covenant. Lexical facts grounded in BDB/TDNT/Strong's.`;
+Content: use only p, ul, li, strong, em tags. Scriptures: <div class="scripture-block"><p class="scripture-text">quote</p><p class="scripture-ref">ref</p></div>. Escape all quotes in JSON strings. Tags array only from: Creation Mandate, Abrahamic Covenant, Mosaic Covenant, Davidic Covenant, New Covenant. Be concise but substantive. Ground lexical facts in BDB/TDNT/Strong's.`;
 
 function getStudies() { try { return JSON.parse(localStorage.getItem('uws_studies')||'[]'); } catch { return []; } }
 function saveStudy(s) {
@@ -288,7 +286,7 @@ async function runStudy() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 3000,
+        max_tokens: 4096,
         system: SYS,
         messages: [{ role:'user', content:`Word study: ${q}` }]
       })
